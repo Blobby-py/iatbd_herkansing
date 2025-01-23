@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Rent;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -122,5 +123,26 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         return view('products.product-edit', compact('product'));
+    }
+
+    public function rent($id)
+    {
+        $product = Product::findOrFail($id);
+        
+        // Controleer of de gebruiker al een product heeft gehuurd
+        if ($product->rentals()->where('user_id', auth()->id())->exists()) {
+            return redirect()->route('products.show', $product->id)->with('error', 'Je hebt dit product al gehuurd!');
+        }
+    
+        // Maak het verhuurrecord aan
+        $rental = new Rent([
+            'product_id' => $product->id,
+            'user_id' => auth()->id(),
+            'rented_at' => now(),
+            'due_at' => now()->addWeeks(1), // Stel de due date in (bijvoorbeeld 1 week na verhuur)
+        ]);
+        $rental->save();
+    
+        return redirect()->route('products.show', $product->id)->with('message', 'Je hebt dit product succesvol gehuurd!');
     }
 }

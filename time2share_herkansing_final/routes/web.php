@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,3 +57,9 @@ Route::post('/users/authenticate', [UserController::class, 'authenticeren']);
 
 // Search
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
+
+// Reviews
+Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('products.reviews.store');
+
+// Rent a product
+Route::get('/products/{product}/rent', [ProductController::class, 'rent'])->name('products.rent')->middleware('auth');

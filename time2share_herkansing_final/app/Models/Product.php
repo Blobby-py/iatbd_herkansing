@@ -35,4 +35,14 @@ class Product extends Model
     {
         return $this->belongsTo(Gebruiker::class, 'gebruiker_id');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'product_id');
+    }
+
+    public function rentals()
+    {
+        return $this->hasMany(Rent::class);
+    }
 }

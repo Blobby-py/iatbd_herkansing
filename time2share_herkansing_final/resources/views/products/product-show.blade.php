@@ -1,6 +1,31 @@
 <x-base-layout>
 
     <div class="mx-4 lg:mx-8">
+
+        <!-- Edit/Delete Product Links and Back Button -->
+        <x-product-card class="mt-8 p-4 bg-gray-100 rounded-xl shadow-md">
+            <div class="flex justify-center items-center space-x-6">
+                <!-- Back Button -->
+                <a href="/" class="bg-gray-200 text-primary py-2 px-6 rounded-xl hover:bg-gray-300 transition-all duration-200 flex items-center justify-center">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Back
+                </a>
+
+                <!-- Edit Button -->
+                <a href="/products/{{ $product->id }}/edit" class="bg-primary text-white py-2 px-6 rounded-xl hover:bg-primary-dark transition-all duration-200 flex items-center justify-center">
+                    <i class="fa-solid fa-pencil mr-2"></i> Edit
+                </a>
+
+                <!-- Delete Button -->
+                <form method="POST" action="/products/{{ $product->id }}" class="flex items-center">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-500 text-white py-2 px-6 rounded-xl hover:bg-red-600 transition-all duration-200 flex items-center justify-center">
+                        <i class="fa-solid fa-trash mr-2"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </x-product-card>
+
         <x-product-card class="p-8 bg-white rounded-xl shadow-xl max-w-2xl mx-auto">
             <div class="flex flex-col items-center justify-center text-center space-y-6">
 
@@ -34,36 +59,66 @@
                         </a>
 
                         <!-- Rent Product Button -->
-                        <a href="{{ $product->website }}" target="_blank" class="block bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-md text-center">
-                            <i class="fa-solid fa-dollar-sign"></i> Rent Product
-                        </a>
+                        @if($product->rentals()->where('user_id', auth()->id())->exists())
+                            <p class="text-red-500">Je hebt dit product al gehuurd!</p>
+                        @else
+                            <a href="{{ route('products.rent', $product->id) }}" class="block bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-md text-center">
+                                <i class="fa-solid fa-dollar-sign"></i> Rent Product
+                            </a>
+                        @endif
+
                     </div>
                 </div>
             </div>
         </x-product-card>
 
-        <!-- Edit/Delete Product Links and Back Button -->
-        <x-product-card class="mt-8 p-4 bg-gray-100 rounded-xl shadow-md">
-            <div class="flex justify-center items-center space-x-6">
-                <!-- Back Button -->
-                <a href="/" class="bg-gray-200 text-primary py-2 px-6 rounded-xl hover:bg-gray-300 transition-all duration-200 flex items-center justify-center">
-                    <i class="fa-solid fa-arrow-left mr-2"></i> Back
-                </a>
+        <!-- Add Review Section -->
+        @auth
+        <x-product-card class="mt-8 p-8 bg-white rounded-xl shadow-xl max-w-2xl mx-auto">
+            <h3 class="text-xl font-bold mb-4">Add a Review</h3>
+            <form method="POST" action="{{ route('products.reviews.store', $product->id) }}" class="space-y-4">
+                @csrf
+                <!-- Rating Input -->
+                <div>
+                    <label for="rating" class="block font-semibold">Rating (1-5):</label>
+                    <input type="number" id="rating" name="rating" min="1" max="5" required
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
+                </div>
 
-                <!-- Edit Button -->
-                <a href="/products/{{ $product->id }}/edit" class="bg-primary text-white py-2 px-6 rounded-xl hover:bg-primary-dark transition-all duration-200 flex items-center justify-center">
-                    <i class="fa-solid fa-pencil mr-2"></i> Edit
-                </a>
+                <!-- Comment Input -->
+                <div>
+                    <label for="comment" class="block font-semibold">Comment:</label>
+                    <textarea id="comment" name="comment" rows="3"
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary"></textarea>
+                </div>
 
-                <!-- Delete Button -->
-                <form method="POST" action="/products/{{ $product->id }}" class="flex items-center">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="bg-red-500 text-white py-2 px-6 rounded-xl hover:bg-red-600 transition-all duration-200 flex items-center justify-center">
-                        <i class="fa-solid fa-trash mr-2"></i> Delete
-                    </button>
-                </form>
-            </div>
+                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark">
+                    Submit Review
+                </button>
+            </form>
         </x-product-card>
+        @endauth
+
+        <!-- Reviews Section -->
+        @if($product->reviews->count())
+        <x-product-card class="mt-8 p-8 bg-gray-100 rounded-xl shadow-md max-w-2xl mx-auto">
+            <h3 class="text-xl font-bold mb-4">Reviews</h3>
+            <ul class="space-y-4">
+                @foreach($product->reviews as $review)
+                <li class="bg-white p-4 shadow rounded-lg">
+                    <div class="flex justify-between">
+                        <div>
+                            <strong>{{ $review->user->name }}</strong>
+                            <span class="text-sm text-gray-500">{{ $review->created_at->diffForHumans() }}</span>
+                        </div>
+                        <span class="text-primary font-bold">{{ $review->rating }}/5</span>
+                    </div>
+                    <p class="mt-2">{{ $review->comment }}</p>
+                </li>
+                @endforeach
+            </ul>
+        </x-product-card>
+        @endif
+
     </div>
 </x-base-layout>

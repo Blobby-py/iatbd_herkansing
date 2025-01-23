@@ -10,6 +10,7 @@ class Rent extends Model
     use HasFactory;
 
     protected $fillable = ['product_id', 'user_id', 'rented_at', 'due_at'];
+    protected $unique = ['product_id', 'user_id'];
 
     // Relaties
     public function product()

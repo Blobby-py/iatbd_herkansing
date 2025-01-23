@@ -63,3 +63,7 @@ Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->
 
 // Rent a product
 Route::get('/products/{product}/rent', [ProductController::class, 'rent'])->name('products.rent')->middleware('auth');
+
+// Return rented product
+Route::get('/products/{product}/return', [ProductController::class, 'returnProduct'])->name('products.return')->middleware('auth');
+

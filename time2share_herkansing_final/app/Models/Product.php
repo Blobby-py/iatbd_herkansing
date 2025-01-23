@@ -45,4 +45,9 @@ class Product extends Model
     {
         return $this->hasMany(Rent::class);
     }
+
+    public function isRented()
+    {
+        return $this->rentals()->where('user_id', auth()->id())->exists();
+    }
 }

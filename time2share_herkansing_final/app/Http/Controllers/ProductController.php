@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Rent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -125,24 +126,53 @@ class ProductController extends Controller
         return view('products.product-edit', compact('product'));
     }
 
+
+    public function returnProduct(Request $request, Product $product)
+    {
+        // Zoek de huur op basis van het product en de ingelogde gebruiker
+        $rental = Rent::where('product_id', $product->id)
+            ->where('user_id', Auth::id()) // Gebruik Auth::id()
+            ->first();
+
+        if ($rental) {
+            $rental->delete();
+            return redirect()->route('products.show', $product->id)->with('success', 'Je hebt dit product succesvol teruggebracht!');
+        } else {
+            return redirect()->route('products.show', $product->id)->with('error', 'Je hebt dit product niet gehuurd!');
+        }
+    }
+
+    
     public function rent($id)
     {
         $product = Product::findOrFail($id);
-        
-        // Controleer of de gebruiker al een product heeft gehuurd
-        if ($product->rentals()->where('user_id', auth()->id())->exists()) {
+
+        // Check if user is logged in
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Je moet inloggen om dit product te huren!');
+        }
+
+        // Check if product is already rented by *anyone*
+        if ($product->rentals()->exists()) {
+            return redirect()->route('products.show', $product->id)->with('error', 'Dit product is al verhuurd!');
+        }
+
+        // Check if the current user has already rented this product (extra check, usually redundant)
+        if ($product->rentals()->where('user_id', Auth::id())->exists()) {
             return redirect()->route('products.show', $product->id)->with('error', 'Je hebt dit product al gehuurd!');
         }
-    
-        // Maak het verhuurrecord aan
+
+
+        // Create the rental record
         $rental = new Rent([
             'product_id' => $product->id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'rented_at' => now(),
-            'due_at' => now()->addWeeks(1), // Stel de due date in (bijvoorbeeld 1 week na verhuur)
+            'due_at' => now()->addWeeks(1),
         ]);
+
         $rental->save();
-    
+
         return redirect()->route('products.show', $product->id)->with('message', 'Je hebt dit product succesvol gehuurd!');
     }
 }

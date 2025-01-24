@@ -1,4 +1,5 @@
 <x-base-layout>
+
     <div class="mx-4 lg:mx-8">
 
         <!-- Edit/Delete Product Links and Back Button -->
@@ -10,14 +11,11 @@
                 </a>
 
                 <!-- Edit Button -->
-                @if (Auth::id() == $product->gebruiker_id)
                 <a href="/products/{{ $product->id }}/edit" class="bg-primary text-white py-2 px-6 rounded-xl hover:bg-primary-dark transition-all duration-200 flex items-center justify-center">
                     <i class="fa-solid fa-pencil mr-2"></i> Edit
                 </a>
-                @endif
 
                 <!-- Delete Button -->
-                @if (Auth::id() == $product->gebruiker_id)
                 <form method="POST" action="/products/{{ $product->id }}" class="flex items-center">
                     @csrf
                     @method('DELETE')
@@ -25,7 +23,6 @@
                         <i class="fa-solid fa-trash mr-2"></i> Delete
                     </button>
                 </form>
-                @endif
             </div>
         </x-product-card>
 
@@ -61,21 +58,30 @@
                             <i class="fa-solid fa-envelope"></i> Contact Seller
                         </a>
 
-                        <!-- Rent Product Button -->
-                        @if(!$product->rentals()->exists()) 
-                        <a href="{{ route('products.rent', $product->id) }}" class="block bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-md text-center">
-                            <i class="fa-solid fa-dollar-sign"></i> Rent Product
-                        </a>
+                        <!-- Rent Product Button
+                        @if($product->rentals()->where('user_id', auth()->id())->exists())
+                            <p class="text-red-500">Je hebt dit product al gehuurd!</p>
                         @else
-                        <p class="text-red-500">Dit product is al verhuurd!</p>
+                            <a href="{{ route('products.rent', $product->id) }}" class="block bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-md text-center">
+                                <i class="fa-solid fa-dollar-sign"></i> Rent Product
+                            </a>
+                        @endif -->
+                        <!-- Rent Product Button -->
+                        @if(!$product->rentals()->where('user_id', auth()->id())->exists())
+                            <a href="{{ route('products.rent', $product->id) }}" class="block bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-md text-center">
+                                <i class="fa-solid fa-dollar-sign"></i> Rent Product
+                            </a>
+                        @else
+                            <p class="text-red-500">Je hebt dit product al gehuurd!</p>
                         @endif
 
                         <!-- Return rented product -->
                         @if($product->rentals()->where('user_id', auth()->id())->exists())
-                        <a href="{{ route('products.return', $product->id) }}" class="block bg-red-500 text-white py-3 rounded-xl hover:bg-red-700 transition-all duration-200 shadow-md text-center mt-4">
-                            <i class="fa-solid fa-undo mr-2"></i> Product Terugbrengen
-                        </a>
+                            <a href="{{ route('products.return', $product->id) }}" class="block bg-red-500 text-white py-3 rounded-xl hover:bg-red-700 transition-all duration-200 shadow-md text-center mt-4">
+                                <i class="fa-solid fa-undo mr-2"></i> Product Terugbrengen
+                            </a>
                         @endif
+
                     </div>
                 </div>
             </div>

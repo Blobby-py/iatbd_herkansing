@@ -38,7 +38,6 @@ class Product extends Model
 
     public function reviews()
     {
-        // return $this->hasMany(Review::class, 'product_id');
         return $this->hasMany(Review::class);
     }
 
@@ -56,9 +55,4 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'gebruiker_id');
     }
-
-    // public function eigenaar()
-    // {
-    //     return $this->belongsTo(User::class, 'gebruiker_id');
-    // }
 }

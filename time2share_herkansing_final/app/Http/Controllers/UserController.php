@@ -40,15 +40,13 @@ class UserController extends Controller
 
     public function profile()
     {
-        $user = auth()->user(); // Haal de ingelogde gebruiker op
+        $user = auth()->user();
     
         if ($user->email === 'admin@example.com') {
-            // Haal alle gebruikers op behalve de admin
             $gebruikers = User::where('email', '!=', 'admin@example.com')->get();
             return view('components.admin-profile', compact('user', 'gebruikers'));
         }
     
-        // Haal de producten en ontvangen reviews voor normale gebruikers
         $producten = $user->products;
         $reviews = $user->receivedReviews()->with('product', 'user')->get();
     
@@ -81,7 +79,6 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Blokkeer of deblokkeer de gebruiker
         $user->blocked = !$user->blocked;
         $user->save();
 

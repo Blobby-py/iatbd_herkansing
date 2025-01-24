@@ -64,7 +64,6 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        // Voeg hier je eigen route middleware toe, bijvoorbeeld:
-        'blocked' => \App\Http\Middleware\CheckIfBlocked::class,  // Hier voeg je je eigen middleware toe
+        'blocked' => \App\Http\Middleware\CheckIfBlocked::class,
     ];
 }

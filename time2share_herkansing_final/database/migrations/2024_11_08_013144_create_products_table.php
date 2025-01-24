@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('tags')->nullable();
             $table->decimal('prijs', 10, 2);
             $table->string('afbeeldingen')->nullable();
-            $table->longText('omschrijving');
+            $table->longText('omschrijving')->nullable();
             $table->timestamps();
         });
     }

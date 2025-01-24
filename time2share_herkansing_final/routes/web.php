@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 // Show homepage and products listing
 Route::get('/', [ProductController::class, 'index']);
 
+// Show user details
+Route::get('/profile', [UserController::class, 'profile'])->middleware('auth');
+
 // Show the create page for products
 Route::get('/products/create', [ProductController::class, 'create'])->middleware('auth');
 
@@ -25,7 +29,6 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 
 // Store new product data
 Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-
 
 // Show edit page for a product
 Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->middleware('auth');
@@ -56,3 +59,20 @@ Route::post('/users/authenticate', [UserController::class, 'authenticeren']);
 
 // Search
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
+
+// Reviews
+Route::post('/products/{product}/reviews', [ReviewController::class, 'store'])->middleware('auth')->name('products.reviews.store');
+
+// Rent a product
+Route::get('/products/{product}/rent', [ProductController::class, 'rent'])->name('products.rent')->middleware('auth');
+
+// Return rented product
+Route::get('/products/{product}/return', [ProductController::class, 'returnProduct'])->name('products.return')->middleware('auth');
+
+// Block a user
+Route::patch('/admin/block/{id}', [UserController::class, 'toggleBlock'])->name('admin.toggleBlock');
+
+// Verify if user is blocked or not
+Route::middleware(['auth', 'blocked'])->group(function () {
+    Route::get('/', [ProductController::class, 'index']);
+});

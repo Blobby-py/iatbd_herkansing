@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Rent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -25,10 +27,9 @@ class ProductController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-
-        $producten = Product::where('titel', 'like', '%' . $query . '%')
-                            ->orWhere('omschrijving', 'like', '%' . $query . '%')
-                            ->paginate(10);
+        
+        // filter on searchterm
+        $producten = Product::filter(['zoekterm' => $query])->paginate(10);
 
         return view('products.product-list', compact('producten', 'query'));
     }
@@ -111,16 +112,69 @@ class ProductController extends Controller
     {
         $product->delete();
     
-        return redirect('/')->with('success', 'Product succesvol bijgewerkt!');
+        return redirect('/')->with('success', 'Product succesvol verwijderd!');
     }
 
     public function show(Product $product)
     {
-        return view('products.product-show', compact('product'));
+        $rental = $product->rentals()->latest()->first();
+        $daysLeft = null;
+    
+        if ($rental) {
+            $daysLeft = now()->diffInDays($rental->due_at, false);
+        }
+    
+        return view('products.product-show', compact('product', 'daysLeft'));
     }
 
     public function edit(Product $product)
     {
         return view('products.product-edit', compact('product'));
+    }
+
+    public function returnProduct(Request $request, Product $product)
+    {
+        $rental = Rent::where('product_id', $product->id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if ($rental) {
+            $rental->delete();
+            return redirect()->route('products.show', $product->id)->with('success', 'Je hebt dit product succesvol teruggebracht!');
+        } else {
+            return redirect()->route('products.show', $product->id)->with('error', 'Je hebt dit product niet gehuurd!');
+        }
+    }
+
+    public function rent($id)
+    {
+        $product = Product::findOrFail($id);
+
+        // Check if user is logged in
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Je moet inloggen om dit product te huren!');
+        }
+
+        // Check if product is already rented by *anyone*
+        if ($product->rentals()->exists()) {
+            return redirect()->route('products.show', $product->id)->with('error', 'Dit product is al verhuurd!');
+        }
+
+        // Check if the current user has already rented this product (extra check, usually redundant)
+        if ($product->rentals()->where('user_id', Auth::id())->exists()) {
+            return redirect()->route('products.show', $product->id)->with('error', 'Je hebt dit product al gehuurd!');
+        }
+
+        // Create the rental record
+        $rental = new Rent([
+            'product_id' => $product->id,
+            'user_id' => Auth::id(),
+            'rented_at' => now(),
+            'due_at' => now()->addWeeks(1),
+        ]);
+
+        $rental->save();
+
+        return redirect()->route('products.show', $product->id)->with('message', 'Je hebt dit product succesvol gehuurd!');
     }
 }

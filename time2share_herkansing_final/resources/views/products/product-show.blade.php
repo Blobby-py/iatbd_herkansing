@@ -63,18 +63,24 @@
                         </a>
 
                         <!-- Rent Product Button -->
-                        @if(!$product->rentals()->exists())
-                            <a href="{{ route('products.rent', $product->id) }}" class="block bg-black text-white py-3 rounded-xl hover:bg-gray-800 transition-all duration-200 shadow-md text-center">
-                                <i class="fa-solid fa-dollar-sign"></i> Rent Product
-                            </a>
-                        @else
-                            <p class="text-red-500">Dit product is al verhuurd!</p>
+                        @if($product->rentals()->exists())
+                            <p class="text-red-500">
+                                This product has already been rented!
+                                @if($daysLeft !== null && $daysLeft > 0)
+                                    <br>Available in {{ $daysLeft }} day(s).
+                                @elseif($daysLeft === 0)
+                                    <br>Available Today
+                                @else
+                                    <br>Rental period has ended
+                                @endif
+                            </p>
                         @endif
+
 
                         <!-- Return rented product -->
                         @if($product->rentals()->where('user_id', auth()->id())->exists())
                             <a href="{{ route('products.return', $product->id) }}" class="block bg-red-500 text-white py-3 rounded-xl hover:bg-red-700 transition-all duration-200 shadow-md text-center mt-4">
-                                <i class="fa-solid fa-undo mr-2"></i> Product Terugbrengen
+                                <i class="fa-solid fa-undo mr-2"></i> Return Product
                             </a>
                         @endif
 

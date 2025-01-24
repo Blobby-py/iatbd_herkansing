@@ -117,7 +117,14 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return view('products.product-show', compact('product'));
+        $rental = $product->rentals()->latest()->first();
+        $daysLeft = null;
+    
+        if ($rental) {
+            $daysLeft = now()->diffInDays($rental->due_at, false);
+        }
+    
+        return view('products.product-show', compact('product', 'daysLeft'));
     }
 
     public function edit(Product $product)

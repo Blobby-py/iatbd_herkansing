@@ -27,10 +27,9 @@ class ProductController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-
-        $producten = Product::where('titel', 'like', '%' . $query . '%')
-                            ->orWhere('omschrijving', 'like', '%' . $query . '%')
-                            ->paginate(10);
+        
+        // Gebruik de scopeFilter om te filteren op basis van de zoekterm
+        $producten = Product::filter(['zoekterm' => $query])->paginate(10);
 
         return view('products.product-list', compact('producten', 'query'));
     }
@@ -113,7 +112,7 @@ class ProductController extends Controller
     {
         $product->delete();
     
-        return redirect('/')->with('success', 'Product succesvol bijgewerkt!');
+        return redirect('/')->with('success', 'Product succesvol verwijderd!');
     }
 
     public function show(Product $product)
@@ -125,7 +124,6 @@ class ProductController extends Controller
     {
         return view('products.product-edit', compact('product'));
     }
-
 
     public function returnProduct(Request $request, Product $product)
     {
@@ -142,7 +140,6 @@ class ProductController extends Controller
         }
     }
 
-    
     public function rent($id)
     {
         $product = Product::findOrFail($id);
@@ -161,7 +158,6 @@ class ProductController extends Controller
         if ($product->rentals()->where('user_id', Auth::id())->exists()) {
             return redirect()->route('products.show', $product->id)->with('error', 'Je hebt dit product al gehuurd!');
         }
-
 
         // Create the rental record
         $rental = new Rent([

@@ -15,21 +15,21 @@ class Product extends Model
         'titel', 'omschrijving', 'categorie', 'prijs', 'afbeeldingen', 'gebruiker_id', 'locatie', 'email', 'tags'
     ];
     
-    public function scopeZoeken($query, array $filters) 
+    public function scopeFilter($query, array $filters)
     {
-        if ($filters['categorie'] ?? false) {
-            $query->where('categorie', 'like', '%' . request('categorie') . '%');
-        }
-
         if ($filters['zoekterm'] ?? false) {
-            $zoekterm = request('zoekterm');
+            $zoekterm = $filters['zoekterm'];
             $query->where(function($query) use ($zoekterm) {
                 $query->where('titel', 'like', '%' . $zoekterm . '%')
                     ->orWhere('omschrijving', 'like', '%' . $zoekterm . '%')
-                    ->orWhere('categorie', 'like', '%' . $zoekterm . '%');
+                    ->orWhere('prijs', 'like', '%' . $zoekterm . '%')
+                    ->orWhere('locatie', 'like', '%' . $zoekterm . '%')
+                    ->orWhere('email', 'like', '%' . $zoekterm . '%')
+                    ->orWhere('tags', 'like', '%' . $zoekterm . '%');
             });
         }
     }
+    
 
     public function eigenaar()
     {

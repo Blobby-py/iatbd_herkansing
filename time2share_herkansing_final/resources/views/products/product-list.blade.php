@@ -10,7 +10,7 @@
                 <x-product-card-item :product="$product" />
             @endforeach
         @else
-            <p>No rental products found for "{{ request()->query('query') }}"!</p>
+            <p>No rental products found :' (</p>
         @endunless
     </div>
 

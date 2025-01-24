@@ -42,14 +42,19 @@ class UserController extends Controller
     {
         $user = auth()->user(); // Haal de ingelogde gebruiker op
     
-        // Haal de producten van de gebruiker
-        $producten = $user->products;
+        if ($user->email === 'admin@example.com') {
+            // Haal alle gebruikers op behalve de admin
+            $gebruikers = User::where('email', '!=', 'admin@example.com')->get();
+            return view('components.admin-profile', compact('user', 'gebruikers'));
+        }
     
-        // Haal de reviews die door anderen zijn geplaatst op de producten van de gebruiker
+        // Haal de producten en ontvangen reviews voor normale gebruikers
+        $producten = $user->products;
         $reviews = $user->receivedReviews()->with('product', 'user')->get();
     
         return view('components.profile', compact('user', 'reviews', 'producten'));
     }
+    
 
     public function authenticeren(Request $request)
     {
@@ -70,5 +75,16 @@ class UserController extends Controller
         Auth::logout();
 
         return redirect('/')->with('status', 'Je bent uitgelogd.');
+    }
+
+    public function toggleBlock($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Blokkeer of deblokkeer de gebruiker
+        $user->blocked = !$user->blocked;
+        $user->save();
+
+        return back()->with('status', $user->blocked ? 'Gebruiker is geblokkeerd.' : 'Gebruiker is degeblookeerd.');
     }
 }

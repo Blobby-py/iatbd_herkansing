@@ -69,3 +69,10 @@ Route::get('/products/{product}/rent', [ProductController::class, 'rent'])->name
 // Return rented product
 Route::get('/products/{product}/return', [ProductController::class, 'returnProduct'])->name('products.return')->middleware('auth');
 
+// Block a user
+Route::patch('/admin/block/{id}', [UserController::class, 'toggleBlock'])->name('admin.toggleBlock');
+
+// Verify if user is blocked or not
+Route::middleware(['auth', 'blocked'])->group(function () {
+    Route::get('/', [ProductController::class, 'index']);
+});

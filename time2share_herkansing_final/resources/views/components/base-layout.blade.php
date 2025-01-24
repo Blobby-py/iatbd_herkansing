@@ -43,12 +43,20 @@
 
                 <ul class="flex space-x-6 text-lg font-semibold">
                     @auth
-                    <li>
-                        <span class="text-primary">Hello, {{auth()->user()->name}}!</span>
-                    </li>
-                    <li>
-                        <a href="/profile" class="hover:text-accent transition-colors"><i class="fa-solid fa-user"></i> Profile</a>
-                    </li>
+                    @if(auth()->user()->blocked)
+                        <!-- Show blocked account message, but still allow logout -->
+                        <li>
+                            <span class="text-red-500">Your account has been blocked.</span>
+                        </li>
+                    @else
+                        <li>
+                            <span class="text-primary">Hello, {{auth()->user()->name}}!</span>
+                        </li>
+                        <li>
+                            <a href="/profile" class="hover:text-accent transition-colors"><i class="fa-solid fa-user"></i> Profile</a>
+                        </li>
+                    @endif
+                    <!-- Always show logout button -->
                     <li>
                         <form class="inline" method="POST" action="/logout">
                             @csrf
@@ -76,9 +84,11 @@
     </main>
 
     <!-- Floating Post Product Button -->
+    @if(!auth()->user() || !auth()->user()->blocked)
     <a href="/products/create" class="fixed bottom-10 right-10 bg-accent text-white text-xl py-4 px-8 rounded-full shadow-lg hover:bg-primary transition-colors flex items-center justify-center z-20">
         <i class="fa-solid fa-plus-circle mr-2"></i> Post Product
     </a>
+    @endif
 
     <!-- Notifications (Hidden by default) -->
     <x-notification />

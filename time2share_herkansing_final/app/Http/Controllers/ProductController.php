@@ -150,22 +150,18 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        // Check if user is logged in
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Je moet inloggen om dit product te huren!');
         }
 
-        // Check if product is already rented by *anyone*
         if ($product->rentals()->exists()) {
             return redirect()->route('products.show', $product->id)->with('error', 'Dit product is al verhuurd!');
         }
 
-        // Check if the current user has already rented this product (extra check, usually redundant)
         if ($product->rentals()->where('user_id', Auth::id())->exists()) {
             return redirect()->route('products.show', $product->id)->with('error', 'Je hebt dit product al gehuurd!');
         }
 
-        // Create the rental record
         $rental = new Rent([
             'product_id' => $product->id,
             'user_id' => Auth::id(),

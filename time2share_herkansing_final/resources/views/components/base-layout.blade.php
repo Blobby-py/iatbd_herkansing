@@ -44,7 +44,6 @@
                 <ul class="flex space-x-6 text-lg font-semibold">
                     @auth
                     @if(auth()->user()->blocked)
-                        <!-- Show blocked account message, but still allow logout -->
                         <li>
                             <span class="text-red-500">Your account has been blocked.</span>
                         </li>

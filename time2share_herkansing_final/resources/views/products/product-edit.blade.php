@@ -27,6 +27,12 @@
                         <input type="email" id="email" name="email" value="{{ old('email', $product->email) }}" class="w-full border border-gray-300 rounded-md p-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" required>
                     </div>
 
+                    <!-- Tags -->
+                    <div>
+                        <label for="tags" class="block text-lg font-semibold">Tags</label>
+                        <input type="text" id="tags" name="tags" value="{{ old('tags', $product->tags) }}" class="w-full border border-gray-300 rounded-md p-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                    </div>
+
                     <!-- Prijs -->
                     <div>
                         <label for="prijs" class="block text-lg font-semibold">Price</label>

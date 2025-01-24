@@ -18,6 +18,14 @@
                         <p class="text-sm mb-2">{{ $product->omschrijving }}</p>
                         <p><strong>Price:</strong> €{{ $product->prijs }}</p>
                         <p><strong>Location:</strong> {{ $product->locatie }}</p>
+                        
+                        <!-- Controleer of het product is uitgeleend -->
+                        @if($product->rentals()->exists())
+                            <p class="text-red-500 font-bold">Currently rented out to: {{ $product->rentals->first()->user->name }}</p>
+                        @else
+                            <p class="text-green-500 font-bold">Available for rent</p>
+                        @endif
+
                         <a href="{{ route('products.show', $product->id) }}" class="text-blue-500 hover:underline mt-4 block">View Product</a>
                     </div>
                 @empty

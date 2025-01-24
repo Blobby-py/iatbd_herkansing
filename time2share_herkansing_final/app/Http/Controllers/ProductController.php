@@ -28,7 +28,7 @@ class ProductController extends Controller
     {
         $query = $request->input('query');
         
-        // Gebruik de scopeFilter om te filteren op basis van de zoekterm
+        // filter on searchterm
         $producten = Product::filter(['zoekterm' => $query])->paginate(10);
 
         return view('products.product-list', compact('producten', 'query'));
@@ -127,9 +127,8 @@ class ProductController extends Controller
 
     public function returnProduct(Request $request, Product $product)
     {
-        // Zoek de huur op basis van het product en de ingelogde gebruiker
         $rental = Rent::where('product_id', $product->id)
-            ->where('user_id', Auth::id()) // Gebruik Auth::id()
+            ->where('user_id', Auth::id())
             ->first();
 
         if ($rental) {

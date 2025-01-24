@@ -19,6 +19,9 @@ use App\Http\Controllers\ReviewController;
 // Show homepage and products listing
 Route::get('/', [ProductController::class, 'index']);
 
+// Show user details
+Route::get('/profile', [UserController::class, 'profile'])->middleware('auth');
+
 // Show the create page for products
 Route::get('/products/create', [ProductController::class, 'create'])->middleware('auth');
 
@@ -26,7 +29,6 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 
 // Store new product data
 Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-
 
 // Show edit page for a product
 Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->middleware('auth');

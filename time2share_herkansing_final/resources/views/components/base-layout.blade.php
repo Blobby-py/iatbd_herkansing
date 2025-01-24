@@ -47,7 +47,7 @@
                         <span class="text-primary">Hello, {{auth()->user()->name}}!</span>
                     </li>
                     <li>
-                        <a href="/products" class="hover:text-accent transition-colors"><i class="fa-solid fa-cogs"></i> Manage Items</a>
+                        <a href="/profile" class="hover:text-accent transition-colors"><i class="fa-solid fa-user"></i> Profile</a>
                     </li>
                     <li>
                         <form class="inline" method="POST" action="/logout">

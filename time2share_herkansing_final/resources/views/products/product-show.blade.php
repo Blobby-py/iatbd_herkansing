@@ -86,24 +86,24 @@
         <!-- Add Review Section -->
         @auth
         <x-product-card class="mt-8 p-8 bg-white rounded-xl shadow-xl max-w-2xl mx-auto">
-            <h3 class="text-xl font-bold mb-4">Add a Review</h3>
-            <form method="POST" action="{{ route('products.reviews.store', $product->id) }}" class="space-y-4">
+            <h3 class="text-2xl font-bold mb-6">Add a Review</h3>
+            <form method="POST" action="{{ route('products.reviews.store', $product->id) }}" class="space-y-6">
                 @csrf
                 <!-- Rating Input -->
                 <div>
-                    <label for="rating" class="block font-semibold">Rating (1-5):</label>
+                    <label for="rating" class="block font-semibold text-lg">Rating (1-5):</label>
                     <input type="number" id="rating" name="rating" min="1" max="5" required
-                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary">
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary p-3 text-lg">
                 </div>
 
                 <!-- Comment Input -->
                 <div>
-                    <label for="comment" class="block font-semibold">Comment:</label>
-                    <textarea id="comment" name="comment" rows="3"
-                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary"></textarea>
+                    <label for="comment" class="block font-semibold text-lg">Comment:</label>
+                    <textarea id="comment" name="comment" rows="4"
+                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary p-3 text-lg"></textarea>
                 </div>
 
-                <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark">
+                <button type="submit" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-all duration-200 shadow-md w-full">
                     Submit Review
                 </button>
             </form>

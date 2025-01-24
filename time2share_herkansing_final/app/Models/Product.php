@@ -38,7 +38,8 @@ class Product extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class, 'product_id');
+        // return $this->hasMany(Review::class, 'product_id');
+        return $this->hasMany(Review::class);
     }
 
     public function rentals()
@@ -50,4 +51,14 @@ class Product extends Model
     {
         return $this->rentals()->where('user_id', auth()->id())->exists();
     }
+
+    public function owner() 
+    {
+        return $this->belongsTo(User::class, 'gebruiker_id');
+    }
+
+    // public function eigenaar()
+    // {
+    //     return $this->belongsTo(User::class, 'gebruiker_id');
+    // }
 }

@@ -38,6 +38,19 @@ class UserController extends Controller
         return view('auth.login');
     }
 
+    public function profile()
+    {
+        $user = auth()->user(); // Haal de ingelogde gebruiker op
+    
+        // Haal de producten van de gebruiker
+        $producten = $user->products;
+    
+        // Haal de reviews die door anderen zijn geplaatst op de producten van de gebruiker
+        $reviews = $user->receivedReviews()->with('product', 'user')->get();
+    
+        return view('components.profile', compact('user', 'reviews', 'producten'));
+    }
+
     public function authenticeren(Request $request)
     {
         $validated = $request->validate([

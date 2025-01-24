@@ -2,7 +2,7 @@
 
 <x-product-card>
     <div class="bg-white p-4 rounded-lg min-w-[300px] max-w-[300px] mx-auto mb-4 flex flex-col min-h-[400px]">
-        <!-- Afbeelding bovenaan -->
+        <!-- Afbeelding -->
         <img class="w-full h-48 object-cover rounded-md mb-4" 
             src="{{ asset('storage/' . json_decode($product->afbeeldingen)[0]) }}" 
             alt="" />
